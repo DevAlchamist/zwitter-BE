@@ -119,4 +119,4 @@ app.get("/", (req, res) => {
   res.json({ status: "running" });
 });
 
-app.listen(8080, () => console.log("listening on port 8080"));
+app.listen(process.env.PORT, () => console.log("listening on port 8080"));
