@@ -14,7 +14,10 @@ const createUser = async (req, res) => {
 
   try {
     const doc = await user.save();
-    const token = jwt.sign({ name, username, id: user.id }, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign(
+      { name, username, id: user.id },
+      process.env.JWT_SECRET_KEY
+    );
 
     res
       .cookie("jwt", token, {
@@ -60,4 +63,6 @@ const logoutUser = (req, res) => {
     .sendStatus(200);
 };
 
-module.exports = { createUser, loginUser, checkUser, logoutUser };
+
+
+module.exports = { createUser, loginUser, checkUser, logoutUser};

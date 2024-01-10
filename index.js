@@ -81,6 +81,7 @@ passport.use(
       if (user) {
         return done(null, {
           username: user.username,
+          name:user.name,
           id: user.id,
         });
       } else {
@@ -109,11 +110,13 @@ const userModel = require("./models/User");
 const authRouter = require("./routes/Auth");
 const userRouter = require("./routes/User");
 const postRouter = require("./routes/Post");
+const commentRouter = require("./routes/Comment");
 
 app.use("/api/auth", authRouter);
 // app.use("/api/user", isAuth(), userRouter);
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
+app.use("/api/comment", commentRouter);
 
 app.get("/", (req, res) => {
   res.json({ status: "running" });

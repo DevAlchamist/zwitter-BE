@@ -94,4 +94,25 @@ const fetchPostById = async (req, res) => {
   }
 };
 
-module.exports = { fetchAllPosts, createPost, updatePost, fetchPostById };
+const fetchUserAllPosts = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await postModel
+      .find({ user: id })
+      .populate({ path: "user", select: "username name" })
+      .exec();
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  fetchAllPosts,
+  createPost,
+  updatePost,
+  fetchPostById,
+  fetchUserAllPosts,
+};
