@@ -17,7 +17,9 @@ const fetchUserById = async (req, res) => {
       username: user.username,
       posts: user.posts,
       followingIds: user.followingIds,
+      followersIds: user.followersIds,
       createdAt: user.createdAt,
+      bio: user.bio,
     });
   } catch (error) {}
 };
@@ -47,4 +49,65 @@ const fetchAllUser = async (req, res) => {
   }
 };
 
-module.exports = { fetchUserById, fetchAllUser };
+const updateUser = async (req, res) => {
+  const { userId, bio, followingUserId, followed, profileImage, coverImage } =
+    req.body;
+
+  // console.log(req.body);
+
+  try {
+    let updateFollowingQuery = {};
+    let updateFollowerQuery = {};
+    if (followingUserId !== undefined) {
+      if (followed !== undefined) {
+        if (followed) {
+          updateFollowerQuery = {
+            $addToSet: { followersIds: userId },
+          };
+          updateFollowingQuery = {
+            $addToSet: { followingIds: followingUserId },
+          };
+        } else {
+          updateFollowerQuery = {
+            $pull: { followersIds: userId },
+          };
+          updateFollowingQuery = {
+            $pull: { followingIds: followingUserId },
+          };
+        }
+      }
+    }
+
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      updateFollowingQuery,
+      {
+        new: true,
+      }
+    );
+    const updatedUserDetail = await userModel.findByIdAndUpdate(
+      followingUserId,
+      updateFollowerQuery,
+      {
+        new: true,
+      }
+    );
+
+    if (bio !== undefined) user.bio = bio;
+    if (profileImage !== undefined) user.profileImage = profileImage;
+    if (coverImage !== undefined) user.coverImage = coverImage;
+
+    if (followingUserId !== undefined) {
+      const updatedUser = await updatedUserDetail.save();
+      res.status(200).json(updatedUser);
+    } else {
+      const updatedUser = await user.save();
+      res.status(200).json(updatedUser);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { fetchUserById, fetchAllUser, updateUser };

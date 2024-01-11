@@ -4,7 +4,6 @@ const {
   loginUser,
   checkUser,
   logoutUser,
-  fetchAllUser,
 } = require("../controllers/Auth");
 const passport = require("passport");
 

@@ -17,6 +17,7 @@ const userSchema = new Schema(
     },
     bio: {
       type: String,
+      default: "Hey ! I am a new User",
     },
     image: {
       type: String,
@@ -33,11 +34,17 @@ const userSchema = new Schema(
         ref: "User",
       },
     ],
-    posts:[
+    followersIds: [
       {
         type: Schema.Types.ObjectId,
-        ref:'Post'
-      }
+        ref: "User",
+      },
+    ],
+    posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Post",
+      },
     ],
   },
   { timestamps: true }
