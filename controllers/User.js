@@ -1,4 +1,9 @@
 const userModel = require("../models/User");
+const { dataUri } = require("../middlewares/Multer");
+const {
+  uploadOnCloudinary,
+  deleteOnCloudinary,
+} = require("../utils/cloudinary");
 
 const fetchUserById = async (req, res) => {
   const { id } = req.params;
@@ -20,6 +25,8 @@ const fetchUserById = async (req, res) => {
       followersIds: user.followersIds,
       createdAt: user.createdAt,
       bio: user.bio,
+      profileImage: user.profileImage,
+      coverImage: user.coverImage,
     });
   } catch (error) {}
 };
@@ -53,7 +60,11 @@ const updateUser = async (req, res) => {
   const { userId, bio, followingUserId, followed, profileImage, coverImage } =
     req.body;
 
-  // console.log(req.body);
+  if (!userId) {
+    return res.status(404).json("userId not specified");
+  }
+
+  // making a query to get that if user followed or unFollowed
 
   try {
     let updateFollowingQuery = {};
@@ -78,6 +89,8 @@ const updateUser = async (req, res) => {
       }
     }
 
+    // updating the user following if user following
+
     const user = await userModel.findByIdAndUpdate(
       userId,
       updateFollowingQuery,
@@ -85,6 +98,9 @@ const updateUser = async (req, res) => {
         new: true,
       }
     );
+
+    // updating the user you followed (followers) if user unFollowing
+
     const updatedUserDetail = await userModel.findByIdAndUpdate(
       followingUserId,
       updateFollowerQuery,
@@ -93,14 +109,48 @@ const updateUser = async (req, res) => {
       }
     );
 
+    // saving in cloudinary and using of multer and dataUri to the buffer into string
+
+    if (req.files) {
+      if (req.files.profileImage) {
+        return (file = dataUri(req.files.profileImage).content);
+      } else if (req.files.coverImage) {
+        return (file = dataUri(req.files.profileImage).content);
+      }
+      const image = await uploadOnCloudinary(file);
+
+      if (req.files.profileImage) {
+        imageFieldToUpdate = "profileImage";
+      } else if (req.files.coverImage) {
+        imageFieldToUpdate = "coverImage";
+      }
+      if (imageFieldToUpdate === "profileImage") {
+        if (user.profileImage.url) {
+          deleteOnCloudinary(user.profileImage.urlId);
+        }
+
+        user.profileImage.url = image.secure_url;
+        user.profileImage.urlId = image.public_id;
+      }
+      if (imageFieldToUpdate === "coverImage") {
+        if (user.coverImage.url) {
+          deleteOnCloudinary(user.coverImage.urlId);
+        }
+
+        user.coverImage.url = image.secure_url;
+        user.coverImage.urlId = image.public_id;
+      }
+    }
+
     if (bio !== undefined) user.bio = bio;
-    if (profileImage !== undefined) user.profileImage = profileImage;
-    if (coverImage !== undefined) user.coverImage = coverImage;
 
     if (followingUserId !== undefined) {
       const updatedUser = await updatedUserDetail.save();
       res.status(200).json(updatedUser);
     } else {
+      if (!user) {
+        return;
+      }
       const updatedUser = await user.save();
       res.status(200).json(updatedUser);
     }

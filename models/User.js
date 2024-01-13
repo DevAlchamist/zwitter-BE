@@ -19,14 +19,21 @@ const userSchema = new Schema(
       type: String,
       default: "Hey ! I am a new User",
     },
-    image: {
-      type: String,
-    },
     coverImage: {
-      type: String,
+      url: {
+        type: String,
+      },
+      urlId: {
+        type: String,
+      },
     },
     profileImage: {
-      type: String,
+      url: {
+        type: String,
+      },
+      urlId: {
+        type: String,
+      },
     },
     followingIds: [
       {

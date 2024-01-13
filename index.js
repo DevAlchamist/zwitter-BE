@@ -44,6 +44,7 @@ const opts = {
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.authenticate("session"));
+app.use(express.urlencoded({ extended: true }));
 
 // Passport Local Strategy for authentication
 passport.use(
@@ -81,7 +82,7 @@ passport.use(
       if (user) {
         return done(null, {
           username: user.username,
-          name:user.name,
+          name: user.name,
           id: user.id,
         });
       } else {
