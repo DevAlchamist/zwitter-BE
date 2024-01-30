@@ -1,10 +1,16 @@
+const { dataUri } = require("../middlewares/Multer");
+const commentsModel = require("../models/Comments");
 const postModel = require("../models/Post");
 const userModel = require("../models/User");
+const {
+  uploadOnCloudinary,
+  deleteOnCloudinary,
+} = require("../utils/cloudinary");
 
 const fetchAllPosts = async (req, res, next) => {
   const posts = await postModel
     .find({})
-    .populate({ path: "user", select: "username name" });
+    .populate({ path: "user", select: "username name profileImage " });
 
   res.status(200).json(posts);
 };
@@ -14,6 +20,15 @@ const createPost = async (req, res, next) => {
 
   try {
     const post = new postModel({ user: id, content });
+
+    if (req.files.postImage) {
+      const file = dataUri(req.files.postImage).content;
+      const image = await uploadOnCloudinary(file, "postImages");
+
+      post.postImage.url = image.secure_url;
+      post.postImage.urlId = image.public_id;
+    }
+
     const newPost = await post.save();
 
     await userModel.findByIdAndUpdate(
@@ -24,7 +39,7 @@ const createPost = async (req, res, next) => {
 
     const result = await newPost.populate({
       path: "user",
-      select: "username name",
+      select: "username name profileImage",
     });
     res.status(200).json(result);
   } catch (error) {
@@ -64,7 +79,7 @@ const updatePost = async (req, res) => {
 
       const result = await updatedPost.populate({
         path: "user",
-        select: "username name",
+        select: "username name profileImage",
       });
       res.status(200).json(result);
     } catch (error) {
@@ -85,7 +100,7 @@ const fetchPostById = async (req, res) => {
   try {
     const post = await postModel
       .findById(id)
-      .populate({ path: "user", select: "username name" })
+      .populate({ path: "user", select: "username name profileImage" })
       .exec();
 
     res.status(200).json(post);
@@ -100,12 +115,41 @@ const fetchUserAllPosts = async (req, res) => {
   try {
     const post = await postModel
       .find({ user: id })
-      .populate({ path: "user", select: "username name" })
+      .populate({ path: "user", select: "username name profileImage" })
       .exec();
 
     res.status(200).json(post);
   } catch (error) {
     console.log(error);
+  }
+};
+
+const deletePost = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ error: "Post ID is required in the request body" });
+    }
+
+    const post = await postModel.findById(id);
+
+    if (post.postImage.url) {
+      deleteOnCloudinary(post.postImage.urlId);
+    }
+
+    await postModel.findByIdAndDelete(id).exec();
+
+    await commentsModel.deleteMany({ postId: id }).exec();
+
+    await userModel.updateOne({ posts: id }, { $pull: { posts: id } }).exec();
+
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -115,4 +159,5 @@ module.exports = {
   updatePost,
   fetchPostById,
   fetchUserAllPosts,
+  deletePost,
 };

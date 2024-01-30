@@ -7,12 +7,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath, folder) => {
   try {
     if (!localFilePath) return null;
     const response = await cloudinary.uploader.upload(localFilePath, {
-      folder: "profileImages",
-      resource_type: "image",
+      folder: folder,
+      resource_type: "auto",
     });
     try {
       return response;
@@ -26,6 +26,7 @@ const uploadOnCloudinary = async (localFilePath) => {
 
 const deleteOnCloudinary = async (publicId) => {
   console.log(`${publicId}`);
+
   try {
     if (!publicId) return null;
     const response = await cloudinary.api.delete_resources([`${publicId}`], {

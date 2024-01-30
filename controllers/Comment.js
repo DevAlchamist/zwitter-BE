@@ -25,7 +25,7 @@ const createComment = async (req, res) => {
   }
 };
 
-const fetchCommentById = async (req, res) => {
+const fetchCommentByPostId = async (req, res) => {
   const { postId } = req.params;
 
   try {
@@ -33,7 +33,7 @@ const fetchCommentById = async (req, res) => {
       .find({ postId })
       .populate({
         path: "userId",
-        select: "username",
+        select: "username name profileImage",
       })
       .exec();
     res.status(200).json(comments);
@@ -42,4 +42,27 @@ const fetchCommentById = async (req, res) => {
   }
 };
 
-module.exports = { createComment, fetchCommentById };
+const deleteComment = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ error: "Comment ID is required in the request body" });
+    }
+
+    await commentsModel.findByIdAndDelete(id).exec();
+
+    await postModel
+      .updateOne({ comments: id }, { $pull: { comments: id } })
+      .exec();
+
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { createComment, fetchCommentByPostId, deleteComment };

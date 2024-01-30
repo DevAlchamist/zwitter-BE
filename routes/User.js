@@ -4,8 +4,8 @@ const {
   fetchAllUser,
   updateUser,
 } = require("../controllers/User");
-const { multerUploads, dataUri } = require("../middlewares/Multer");
-const { uploadOnCloudinary } = require("../utils/cloudinary");
+const { multerUploads} = require("../middlewares/Multer");
+// const { uploadOnCloudinary } = require("../utils/cloudinary");
 
 const router = express.Router();
 

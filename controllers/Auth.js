@@ -43,6 +43,7 @@ const loginUser = async (req, res) => {
       id: user.id,
       name: user.name,
       username: user.username,
+      profileImage: user.profileImage,
     });
 };
 
@@ -63,6 +64,4 @@ const logoutUser = (req, res) => {
     .sendStatus(200);
 };
 
-
-
-module.exports = { createUser, loginUser, checkUser, logoutUser};
+module.exports = { createUser, loginUser, checkUser, logoutUser };

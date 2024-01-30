@@ -6,6 +6,7 @@ const storage = multer.memoryStorage();
 const multerUploads = multer({ storage }).fields([
   { name: "profileImage", maxCount: 1 },
   { name: "coverImage", maxCount: 1 },
+  { name: "postImage", maxCount: 1 },
 ]);
 
 

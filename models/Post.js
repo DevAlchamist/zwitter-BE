@@ -14,17 +14,22 @@ const postSchema = new Schema({
   likedIds: [
     {
       type: Schema.Types.ObjectId,
-      ref:'User'
+      ref: "User",
     },
   ],
   comments: [
     {
       type: Schema.Types.ObjectId,
-      ref:'Comments'
+      ref: "Comments",
     },
   ],
-  image: {
-    type: String,
+  postImage: {
+    url: {
+      type: String,
+    },
+    urlId: {
+      type: String,
+    },
   },
   createdAt: {
     type: Date,

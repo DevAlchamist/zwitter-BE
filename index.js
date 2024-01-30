@@ -23,7 +23,7 @@ const app = express();
 // Apply CORS middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://zwitter-plum.vercel.app",
     credentials: true, // Allow cookies to be sent back and forth
   })
 );
@@ -66,7 +66,13 @@ passport.use(
         { username: user.username, id: user.id },
         process.env.JWT_SECRET_KEY
       );
-      done(null, { id: user.id, name: user.name, username, token });
+      done(null, {
+        id: user.id,
+        name: user.name,
+        username,
+        profileImage: user.profileImage,
+        token,
+      });
     } catch (error) {
       done(error);
     }
@@ -84,6 +90,7 @@ passport.use(
           username: user.username,
           name: user.name,
           id: user.id,
+          profileImage: user.profileImage,
         });
       } else {
         return done(null, false);
