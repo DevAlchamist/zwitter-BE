@@ -21,9 +21,21 @@ mongoose
 const app = express();
 
 // Apply CORS middleware
+
+const allowedOrigins = [
+  "https://zwitter-plum.vercel.app",
+  "http://localhost:5173",
+];
+
 app.use(
   cors({
-    origin: 'https://zwitter-plum.vercel.app',
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+app.use(
+  cors({
+    origin: "https://zwitter-plum.vercel.app",
     credentials: true,
   })
 );
