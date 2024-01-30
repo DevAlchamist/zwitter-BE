@@ -23,8 +23,8 @@ const app = express();
 // Apply CORS middleware
 
 const allowedOrigins = [
-  "https://zwitter-plum.vercel.app",
   "http://localhost:5173",
+  "https://zwitter-plum.vercel.app",
 ];
 
 app.use(
