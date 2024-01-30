@@ -23,7 +23,7 @@ const app = express();
 // Apply CORS middleware
 app.use(
   cors({
-    origin: "*",
+    origin: "https://zwitter-plum.vercel.app/",
     credentials: true, // Allow cookies to be sent back and forth
   })
 );
