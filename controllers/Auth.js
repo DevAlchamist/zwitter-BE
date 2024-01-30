@@ -36,6 +36,8 @@ const loginUser = async (req, res) => {
   res
     .cookie("jwt", user.token, {
       expires: new Date(Date.now() + 3600000),
+      sameSite: "None",
+      secure: true,
       httpOnly: true,
     })
     .status(201)
@@ -59,6 +61,8 @@ const logoutUser = (req, res) => {
   res
     .cookie("jwt", null, {
       expires: new Date(Date.now()),
+      sameSite: "None",
+      secure: true,
       httpOnly: true,
     })
     .sendStatus(200);
