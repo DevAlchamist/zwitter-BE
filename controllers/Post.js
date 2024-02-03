@@ -146,7 +146,7 @@ const deletePost = async (req, res) => {
 
     await userModel.updateOne({ posts: id }, { $pull: { posts: id } }).exec();
 
-    res.status(200).json({ message: "Post deleted successfully" });
+    res.status(200).json({ deletedPostId: id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
