@@ -58,7 +58,7 @@ const deleteComment = async (req, res) => {
       .updateOne({ comments: id }, { $pull: { comments: id } })
       .exec();
 
-    res.status(200).json({ message: "Comment deleted successfully" });
+    res.status(200).json({ deletedPostId: id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
