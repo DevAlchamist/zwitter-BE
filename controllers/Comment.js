@@ -16,7 +16,7 @@ const createComment = async (req, res) => {
 
     const result = await doc.populate({
       path: "userId",
-      select: "username",
+      select: "username name profileImage",
     });
 
     res.status(200).json(result);
