@@ -21,7 +21,9 @@ const createUser = async (req, res) => {
 
     res
       .cookie("jwt", token, {
-        expires: new Date(Date.now() + 3600000),
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        sameSite: "None",
+        secure: true,
         httpOnly: true,
       })
       .status(201)
@@ -35,7 +37,7 @@ const loginUser = async (req, res) => {
   const user = req.user;
   res
     .cookie("jwt", user.token, {
-      expires: new Date(Date.now() + 3600000),
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: "None",
       secure: true,
       httpOnly: true,
