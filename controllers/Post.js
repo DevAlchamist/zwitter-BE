@@ -1,11 +1,6 @@
-const { dataUri } = require("../middlewares/Multer");
 const commentsModel = require("../models/Comments");
 const postModel = require("../models/Post");
 const userModel = require("../models/User");
-const {
-  uploadOnCloudinary,
-  deleteOnCloudinary,
-} = require("../utils/cloudinary");
 
 const fetchAllPosts = async (req, res, next) => {
   const posts = await postModel
@@ -20,14 +15,6 @@ const createPost = async (req, res, next) => {
 
   try {
     const post = new postModel({ user: id, content });
-
-    if (req.files.postImage) {
-      const file = dataUri(req.files.postImage).content;
-      const image = await uploadOnCloudinary(file, "postImages");
-
-      post.postImage.url = image.secure_url;
-      post.postImage.urlId = image.public_id;
-    }
 
     const newPost = await post.save();
 
@@ -135,10 +122,6 @@ const deletePost = async (req, res) => {
     }
 
     const post = await postModel.findById(id);
-
-    if (post.postImage.url) {
-      deleteOnCloudinary(post.postImage.urlId);
-    }
 
     await postModel.findByIdAndDelete(id).exec();
 
