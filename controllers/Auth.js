@@ -69,7 +69,6 @@ const logoutUser = (req, res) => {
 };
 
 const resetPasswordReq = async (req, res) => {
-  console.log(req.body);
   const email = req.body.email;
   const user = await userModel.findOne({ email });
   if (user) {
@@ -98,11 +97,10 @@ const resetPasswordReq = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   const { email, password, token } = req.body;
-  console.log({ email, password, token });
 
   try {
     // Find user by email and reset token
-    const user = await userModel.findOne({ email, resetPasswordToken: token });
+    const user = await userModel.findOne({ email: email });
 
     if (!user) {
       return res.sendStatus(400); // User not found or invalid token
