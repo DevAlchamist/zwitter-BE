@@ -6,6 +6,10 @@ const userSchema = new Schema(
       type: String,
       //   required: true,
     },
+    email: {
+      type: String,
+      required:true
+    },
     username: {
       type: String,
       required: true,
@@ -56,8 +60,6 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
-
 
 const virtual = userSchema.virtual("id");
 virtual.get(function () {

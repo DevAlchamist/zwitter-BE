@@ -76,7 +76,7 @@ passport.use(
         id: user.id,
         name: user.name,
         username,
-        profileImage: user.profileImage,
+        email: user.email,
         token,
       });
     } catch (error) {
@@ -96,7 +96,7 @@ passport.use(
           username: user.username,
           name: user.name,
           id: user.id,
-          profileImage: user.profileImage,
+          email: user.email,
         });
       } else {
         return done(null, false);

@@ -13,15 +13,13 @@ const fetchUserById = async (req, res) => {
 
     res.status(200).json({
       id: user.id,
+      email:user.email,
       name: user.name,
       username: user.username,
       posts: user.posts,
       followingIds: user.followingIds,
       followersIds: user.followersIds,
       createdAt: user.createdAt,
-      bio: user.bio,
-      profileImage: user.profileImage,
-      coverImage: user.coverImage,
     });
   } catch (error) {}
 };
