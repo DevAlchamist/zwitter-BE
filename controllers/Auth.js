@@ -76,7 +76,7 @@ const resetPasswordReq = async (req, res) => {
     user.resetPasswordToken = token;
     await user.save();
     const resetPageLink =
-      "http://localhost:5173/reset-password?token=" + token + "&email=" + email;
+      "https://zwitter-fe.vercel.app/reset-password?token=" + token + "&email=" + email;
     const subject = "reset password for shop pulse";
     const html = ResetReq(resetPageLink);
 
